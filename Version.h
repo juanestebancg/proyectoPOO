@@ -23,6 +23,9 @@ class Version{
 	public:
 		Version();
 		void setNombre(string);
+		void addSubversion(Subversion);
+		vector<Subversion> getSubversiones();
+		void nuevaSubver(vector<Subversion>);
 		string getNombre();
 		~Version();
 

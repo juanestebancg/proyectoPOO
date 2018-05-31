@@ -19,7 +19,7 @@ void Controlador::crear(string temp,string s){
 	prog.setOriginal(temp);
     archivo_control.open(s.c_str(), ios::trunc);
 	Version v1;
-	//prog.addVersion("1.1",v1);
+	prog.addVersion("1.1",v1);
 
 }
 vector<int> Controlador::split(string s){
@@ -41,23 +41,73 @@ vector<int> Controlador::split(string s){
 }
 
 void Controlador::nuevoDelta(string s){
-	int puntos = 0,aux=0;
-	double RN = 0.0;
+	int puntos = 0,aux = 0,pot = 0;
+	int RN = 0;
+	string nombre_newVersion, nombre_newSubver;
 	vector<Version> versiones_temp = prog.getVersiones();
+	vector<Subversion> subver_temp;
+	Version nuevaVersion,version_temp;
+	Subversion nuevaSubver;
 	for(int i = 0;i<s.size();i++){
 		if(s[i] == '.'){
 			puntos++;
 		}
 	}
 
-	if(puntos == 1 && s == versiones_temp[versiones_temp.size()-1]){
-		for(int i = 0; i<s.size();i++){
+	if(puntos == 1 && s == versiones_temp[versiones_temp.size()-1].getNombre()){
+		for(int i = s.size()-1;i>=0;i--){
 			if(s[i]=='.'){
-				while(i<s.size()){
-					RN += ((s[i]-'0')*pow(10,aux));
-					aux++;
-					i++;
+				nombre_newVersion = s.substr(0,i+1);
+				break;
+			}
+			RN += ((s[i]-'0')*pow(10,pot));
+			pot++;
+		}
+		RN += 1;
+		nombre_newVersion += to_string(RN);
+		nuevaVersion.setNombre(nombre_newVersion);
+		versiones_temp.push_back(nuevaVersion);
+
+	}
+
+	if(puntos == 1 && s!= versiones_temp[versiones_temp.size()-1].getNombre()){
+		for(int i = 0;i<versiones_temp.size();i++){
+			if(versiones_temp[i].getNombre() == s){
+				version_temp = versiones_temp[i];
+				nuevaSubver.setID(s+".1.1");
+				version_temp.addSubversion(nuevaSubver);
+				versiones_temp[i] = version_temp;
+				break;
+			}
+		}
+	}
+	if(puntos == 3){
+		for(int i = 0;i<s.size() ;i++){
+			if(s[i] == '.'){
+				aux++;
+			}
+			if(aux < 2){
+				nombre_newVersion.push_back(s[i]);
+			}
+			if(aux>3){
+				nombre_newSubver.push_back(s[i]);
+			}
+
+		}
+		for(int i = 0;i<versiones_temp.size();i++){
+			if(versiones_temp[i].getNombre() == nombre_newVersion){
+				subver_temp = versiones_temp[i].getSubversiones();
+				if(subver_temp[subver_temp.size()-1].getID() == s){
+					for(int j = nombre_newSubver.size()-1; j>=0;j--){
+						RN += (nombre_newSubver[j]-'0')*pow(10,pot);
+						pot++;
+					}
+					RN+=1;
+					nombre_newVersion += "." + to_string(RN);
+					nuevaSubver.setID(nombre_newVersion);
+					versiones_temp[i].addSubversion(nuevaSubver);
 				}
+
 			}
 		}
 
