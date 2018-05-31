@@ -15,12 +15,35 @@ Controlador::Controlador(){
 }
 
 
+void Controlador::impresion(){
+	vector<Version> v1;
+	vector<Subversion> v2;
+	v1 = prog.getVersiones();
+	for(int i = 0;i<v1.size();i++){
+		cout<<v1[i].getNombre()<<endl;
+		if(!(v1[i].getSubversiones().empty())){
+			v2 = v1[i].getSubversiones();
+			cout<<"sub ";
+			for(int j = 0; j<v2.size();j++){
+				cout<<v2[j].getID()<<" -> ";
+
+			}
+			cout<<endl;
+		}
+	}
+}
 void Controlador::crear(string temp,string s){
 	prog.setOriginal(temp);
     archivo_control.open(s.c_str(), ios::trunc);
 	Version v1;
+	Version v2,v3,v4,v5;
 	prog.addVersion("1.1",v1);
-
+	prog.addVersion("1.2",v2);
+	/*
+	prog.addVersion("1.3",v3);
+	prog.addVersion("1.4",v4);
+	prog.addVersion("1.5",v5);
+*/
 }
 vector<int> Controlador::split(string s){
 	vector<int> posiciones;
@@ -40,7 +63,53 @@ vector<int> Controlador::split(string s){
 
 }
 
-void Controlador::nuevoDelta(string s){
+bool Controlador::validacion(string s){
+	int puntos = 0,aux = 0;
+	string temp;
+	vector<Version> v1 = prog.getVersiones();
+	vector<Subversion> v2;
+	for(int i = 0;i<s.size();i++){
+		if(s[i] == '.'){
+			puntos++;
+		}
+	}
+	if(puntos== 1 ){
+		for(int i = 0;i<v1.size();i++){
+			if(v1[i].getNombre()==s){
+				return true;
+			}
+		}
+	}
+	else if(puntos == 3){
+		for(int i = 0;i<s.size() && aux < 2;i++){
+			if(s[i] == '.')
+				aux++;
+			if(aux<2)
+				temp.push_back(s[i]);
+		}
+		for(int i = 0;i<v1.size();i++){
+			if(v1[i].getNombre() == temp){
+				v2 = v1[i].getSubversiones();
+				for(int j = 0; j<v2.size();j++){
+					if(v2[j].getID() == s)
+						return true;
+				}
+			}
+		}
+
+
+	}
+	else if (puntos !=3 && puntos != 1){
+		return true;
+	}
+	return false;
+}
+
+void Controlador::nuevoDelta(string s,string control){
+	archivo_control.open(control.c_str(),ios::app);
+	//if(!validacion(s)){
+		//return;
+	//}
 	int puntos = 0,aux = 0,pot = 0;
 	int RN = 0;
 	bool band = true;
@@ -54,7 +123,6 @@ void Controlador::nuevoDelta(string s){
 			puntos++;
 		}
 	}
-
 	if(puntos == 1 && s == versiones_temp[versiones_temp.size()-1].getNombre()){
 		for(int i = s.size()-1;i>=0;i--){
 			if(s[i]=='.'){
@@ -68,21 +136,32 @@ void Controlador::nuevoDelta(string s){
 		nombre_newVersion += to_string(RN);
 		nuevaVersion.setNombre(nombre_newVersion);
 		versiones_temp.push_back(nuevaVersion);
+		archivo_control<<"\n";
+		archivo_control<<nombre_newVersion;
+		archivo_control<<"\n";
+		archivo_control<<"_#";
+
 
 	}
 
-	if(puntos == 1 && s!= versiones_temp[versiones_temp.size()-1].getNombre()){
+	else if(puntos == 1 && s!= versiones_temp[versiones_temp.size()-1].getNombre()){
 		for(int i = 0;i<versiones_temp.size();i++){
 			if(versiones_temp[i].getNombre() == s){
 				version_temp = versiones_temp[i];
 				nuevaSubver.setID(s+".1.1");
+				string hola = nuevaSubver.getID();
 				version_temp.addSubversion(nuevaSubver);
 				versiones_temp[i] = version_temp;
+				archivo_control<<"\n";
+				archivo_control<<hola;
+				archivo_control<<"\n";
+				archivo_control<<"_#";
 				break;
 			}
 		}
+
 	}
-	if(puntos == 3){
+	else if(puntos == 3){
 		for(int i = 0;i<s.size() ;i++){
 			if(s[i] == '.'){
 				aux++;
@@ -90,23 +169,34 @@ void Controlador::nuevoDelta(string s){
 			if(aux < 2){
 				nombre_newVersion.push_back(s[i]);
 			}
-			if(aux>=3){
+			if(aux>=2){
 				nombre_newSubver.push_back(s[i]);
 			}
 
 		}
+		aux = 0;
 		for(int i = 0;i<versiones_temp.size();i++){
 			if(versiones_temp[i].getNombre() == nombre_newVersion){
 				subver_temp = versiones_temp[i].getSubversiones();
 				if(subver_temp[subver_temp.size()-1].getID() == s){
-					for(int j = nombre_newSubver.size()-1; j>=0;j--){
+					for(int j = nombre_newSubver.size()-1 ; j>=0 && nombre_newSubver[j] != '.';j--){
 						RN += (nombre_newSubver[j]-'0')*pow(10,pot);
 						pot++;
+
+					}
+					for(int j = 0 ; j<nombre_newSubver.size() && aux !=2 ;j++){
+						if(nombre_newSubver[j] == '.')
+							aux++;
+						nombre_newVersion += nombre_newSubver[j];
 					}
 					RN+=1;
-					nombre_newVersion += "." + to_string(RN);
+					nombre_newVersion +=  to_string(RN);
 					nuevaSubver.setID(nombre_newVersion);
 					versiones_temp[i].addSubversion(nuevaSubver);
+					archivo_control<<"\n";
+					archivo_control<<nombre_newVersion;
+					archivo_control<<"\n";
+					archivo_control<<"_#";
 					break;
 				}
 
@@ -114,19 +204,26 @@ void Controlador::nuevoDelta(string s){
 		}
 
 	}
-	if(puntos==0){
+	else if(puntos==0){
 		string auxs = versiones_temp[versiones_temp.size()-1].getNombre();
 		int R = stoi(auxs.substr(0,auxs.find(".")));
 		int N = stoi(s);
 		if(N>R){
-			nombre_newVersion = s+".1";
+			R += 1;
+			nombre_newVersion = to_string(R)+".1";
 			nuevaVersion.setNombre(nombre_newVersion);
 			versiones_temp.push_back(nuevaVersion);
+			archivo_control<<"\n";
+			archivo_control<<nombre_newVersion;
+			archivo_control<<"\n";
+			archivo_control<<"_#";
+
 		}
 
 	}
-	if(puntos == 2){
+	else if(puntos == 2 ){
 		string temp,otro;
+		int num,num2;
 		for(int i = 0;i<s.size() ;i++){
 				if(s[i] == '.'){
 					aux++;
@@ -134,46 +231,58 @@ void Controlador::nuevoDelta(string s){
 				if(aux < 2){
 					nombre_newVersion.push_back(s[i]);
 				}
-				if(aux == 2){
+				if(aux == 2 && s[i] != '.'){
 					nombre_newSubver.push_back(s[i]);
 				}
 
 		}
 		aux = 0;
+
 		for(int i = 0; i<versiones_temp.size() && band;i++){
 			if(versiones_temp[i].getNombre() == nombre_newVersion){
 				subver_temp = versiones_temp[i].getSubversiones();
 				temp = subver_temp[subver_temp.size()-1].getID();
-				for(int j = 0; j<temp.size();j++){
+				for(int j = 0; j<temp.size() && band;j++){
 					if(temp[j] == '.'){
 						aux++;
 					}
-					if(aux>=2){
-						otro = temp.substr(j,temp.size());
+					if(aux==2){
+						otro = temp.substr(j+1,temp.size()-1);
 						otro = otro.substr(0,otro.find("."));
-						int num = stoi(otro);
-						if(num> stoi(nombre_newSubver)){
+						 num =atoi(otro.c_str());
+						 num2 = atoi(nombre_newSubver.c_str());
+						if(num<num2 ){
 							s += ".1";
 							nuevaSubver.setID(s);
 							subver_temp.push_back(nuevaSubver);
 							versiones_temp[i].nuevaSubver(subver_temp);
 							band = false;
+							archivo_control<<"\n";
+							archivo_control<<nuevaSubver.getID();
+							archivo_control<<"\n";
+							archivo_control<<"_#";
+
 							break;
 
 						}
+
+
 					}
 				}
 
 			}
 		}
 	}
+	archivo_control.close();
 	prog.actualizarVersiones(versiones_temp);
 
 }
 
 void Controlador::obtener(string control,string version){
+
+	nuevoDelta(version,control);
+	archivo_control.open(control.c_str(),ios::in);
     string linea;
-    archivo_control.open(control.c_str(),ios::in);
     fstream archivo;
     archivo.open(prog.getOriginal().c_str(),ios::in);
     bool band = true;
@@ -182,6 +291,7 @@ void Controlador::obtener(string control,string version){
     vector<int> agregadas;
     vector<string> copia;
     int cont = 1;
+
     while(!archivo_control.eof() && band){
             getline(archivo_control,linea);
             if(linea == version){
@@ -209,6 +319,9 @@ void Controlador::obtener(string control,string version){
             }
 
         }
+        if(band==true){
+        return;
+        }
 
         int j = 1, cont_e = 0;
         while(!archivo.eof()){
@@ -232,6 +345,9 @@ void Controlador::obtener(string control,string version){
      for(int i = 0;i<copia.size();i++){
     	 cout<<copia[i]<<endl;
      }
+
+     archivo.close();
+     archivo_control.close();
 }
 
 Controlador::~Controlador(){

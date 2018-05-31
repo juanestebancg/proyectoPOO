@@ -23,7 +23,9 @@ class Controlador{
 		vector<int> split(string);
 		void obtener(string,string);
 		void modificar(string);
-		void nuevoDelta(string);
+		void nuevoDelta(string,string);
+		void impresion();
+		bool validacion(string);
 
 		~Controlador();
 };
