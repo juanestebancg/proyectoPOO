@@ -43,6 +43,7 @@ vector<int> Controlador::split(string s){
 void Controlador::nuevoDelta(string s){
 	int puntos = 0,aux = 0,pot = 0;
 	int RN = 0;
+	bool band = true;
 	string nombre_newVersion, nombre_newSubver;
 	vector<Version> versiones_temp = prog.getVersiones();
 	vector<Subversion> subver_temp;
@@ -89,7 +90,7 @@ void Controlador::nuevoDelta(string s){
 			if(aux < 2){
 				nombre_newVersion.push_back(s[i]);
 			}
-			if(aux>3){
+			if(aux>=3){
 				nombre_newSubver.push_back(s[i]);
 			}
 
@@ -106,12 +107,68 @@ void Controlador::nuevoDelta(string s){
 					nombre_newVersion += "." + to_string(RN);
 					nuevaSubver.setID(nombre_newVersion);
 					versiones_temp[i].addSubversion(nuevaSubver);
+					break;
 				}
 
 			}
 		}
 
 	}
+	if(puntos==0){
+		string auxs = versiones_temp[versiones_temp.size()-1].getNombre();
+		int R = stoi(auxs.substr(0,auxs.find(".")));
+		int N = stoi(s);
+		if(N>R){
+			nombre_newVersion = s+".1";
+			nuevaVersion.setNombre(nombre_newVersion);
+			versiones_temp.push_back(nuevaVersion);
+		}
+
+	}
+	if(puntos == 2){
+		string temp,otro;
+		for(int i = 0;i<s.size() ;i++){
+				if(s[i] == '.'){
+					aux++;
+				}
+				if(aux < 2){
+					nombre_newVersion.push_back(s[i]);
+				}
+				if(aux == 2){
+					nombre_newSubver.push_back(s[i]);
+				}
+
+		}
+		aux = 0;
+		for(int i = 0; i<versiones_temp.size() && band;i++){
+			if(versiones_temp[i].getNombre() == nombre_newVersion){
+				subver_temp = versiones_temp[i].getSubversiones();
+				temp = subver_temp[subver_temp.size()-1].getID();
+				for(int j = 0; j<temp.size();j++){
+					if(temp[j] == '.'){
+						aux++;
+					}
+					if(aux>=2){
+						otro = temp.substr(j,temp.size());
+						otro = otro.substr(0,otro.find("."));
+						int num = stoi(otro);
+						if(num> stoi(nombre_newSubver)){
+							s += ".1";
+							nuevaSubver.setID(s);
+							subver_temp.push_back(nuevaSubver);
+							versiones_temp[i].nuevaSubver(subver_temp);
+							band = false;
+							break;
+
+						}
+					}
+				}
+
+			}
+		}
+	}
+	prog.actualizarVersiones(versiones_temp);
+
 }
 
 void Controlador::obtener(string control,string version){

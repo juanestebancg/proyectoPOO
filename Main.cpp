@@ -15,7 +15,7 @@ int main(){
 	Controlador control;
 	control.crear("prog1.txt","hhh.txt");
 	control.obtener("jeje.txt","1.2");
-	control.nuevoDelta("1.1");
+	control.nuevoDelta("2");
 
 	return 0;
 
