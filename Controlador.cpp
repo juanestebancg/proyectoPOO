@@ -34,7 +34,7 @@ void Controlador::impresion(){
 }
 void Controlador::crear(string temp,string s){
 	prog.setOriginal(temp);
-    archivo_control.open(s.c_str(), ios::trunc);
+    //archivo_control.open(s.c_str(), ios::trunc);
 	Version v1;
 	Version v2,v3,v4,v5;
 	prog.addVersion("1.1",v1);
@@ -106,12 +106,6 @@ bool Controlador::validacion(string s){
 }
 
 void Controlador::nuevoDelta(string s,string control){
-	archivo_control.open(control.c_str(),ios::app);
-	if(archivo_control.fail()){
-		cout<<"error"<<endl;
-		archivo_control.close();
-		nuevoDelta(s,control);
-	}
 	int puntos = 0,aux = 0,pot = 0;
 	int RN = 0;
 	bool band = true;
@@ -138,12 +132,7 @@ void Controlador::nuevoDelta(string s,string control){
 		nombre_newVersion += to_string(RN);
 		nuevaVersion.setNombre(nombre_newVersion);
 		versiones_temp.push_back(nuevaVersion);
-		archivo_control<<"\n";
-		archivo_control<<nombre_newVersion;
-		archivo_control<<"\n";
-		archivo_control<<"_#";
-
-
+		ultima_version = nombre_newVersion;
 	}
 
 	else if(puntos == 1 && s!= versiones_temp[versiones_temp.size()-1].getNombre()){
@@ -154,10 +143,7 @@ void Controlador::nuevoDelta(string s,string control){
 				string hola = nuevaSubver.getID();
 				version_temp.addSubversion(nuevaSubver);
 				versiones_temp[i] = version_temp;
-				archivo_control<<"\n";
-				archivo_control<<hola;
-				archivo_control<<"\n";
-				archivo_control<<"_#";
+				ultima_version = hola;
 				break;
 			}
 		}
@@ -195,10 +181,7 @@ void Controlador::nuevoDelta(string s,string control){
 					nombre_newVersion +=  to_string(RN);
 					nuevaSubver.setID(nombre_newVersion);
 					versiones_temp[i].addSubversion(nuevaSubver);
-					archivo_control<<"\n";
-					archivo_control<<nombre_newVersion;
-					archivo_control<<"\n";
-					archivo_control<<"_#";
+					ultima_version =  nombre_newVersion;
 					break;
 				}
 
@@ -215,10 +198,7 @@ void Controlador::nuevoDelta(string s,string control){
 			nombre_newVersion = to_string(R)+".1";
 			nuevaVersion.setNombre(nombre_newVersion);
 			versiones_temp.push_back(nuevaVersion);
-			archivo_control<<"\n";
-			archivo_control<<nombre_newVersion;
-			archivo_control<<"\n";
-			archivo_control<<"_#";
+			ultima_version =  nombre_newVersion;
 
 		}
 
@@ -259,11 +239,7 @@ void Controlador::nuevoDelta(string s,string control){
 							subver_temp.push_back(nuevaSubver);
 							versiones_temp[i].nuevaSubver(subver_temp);
 							band = false;
-							archivo_control<<"\n";
-							archivo_control<<nuevaSubver.getID();
-							archivo_control<<"\n";
-							archivo_control<<"_#";
-
+							ultima_version = s;
 							break;
 
 						}
@@ -275,13 +251,12 @@ void Controlador::nuevoDelta(string s,string control){
 			}
 		}
 	}
-	archivo_control.close();
 	prog.actualizarVersiones(versiones_temp);
 
 
 }
 
-void Controlador::obtener(string control,string version){
+vector<string> Controlador::obtener(string control,string version){
 	archivo_control.open(control.c_str(),ios::in);
     string linea;
     fstream archivo;
@@ -331,7 +306,7 @@ void Controlador::obtener(string control,string version){
         }
     	if(cont==1){
     		archivo.close();
-    		return;
+    		return copia;
     	}
 
         int j = 1, cont_e = 0;
@@ -359,13 +334,62 @@ void Controlador::obtener(string control,string version){
 
      archivo.close();
      archivo_control.close();
+     return copia;
 
+}
 
+void Controlador::modificar(string s){
+	archivo_control.open(s.c_str(),ios::app);
+	if(archivo_control.fail()){
+		archivo_control.close();
+		//modificar(s,v,mod,copia);
+		modificar(s);
+	}
+	vector<string> cambios;
+	vector<char> insertadas;
+	vector<char> eliminadas;
+	string linea;
+	char temp;
+	/*
+	for(int i = 0;i<mod.size();i++){
+		if(i>copia.size()){
+			temp = char(i+1);
+			insertadas.push_back(temp);
+			cambios.push_back(mod[i]);
+		}
+		if(mod[i] != copia[i]){
+			temp = char(i+1);
+			eliminadas.push_back(temp);
+			insertadas.push_back(temp);
+			cambios.push_back(mod[i]);
 
+		}
+	}*/
 
+		//getline(archivo_control,linea);
+		archivo_control<<"\n";
+		archivo_control<<ultima_version;
+		archivo_control<<"\n";
+		archivo_control<<"_#";
+		archivo_control<<"\n";
+		/*
+		for(int i = 0; i<eliminadas.size();i++){
+			archivo_control<<eliminadas[i];
+			archivo_control<<" ";
+		}
+		archivo_control<<"\n";
+		for(int i = 0; i<insertadas.size();i++){
+			archivo_control<<insertadas[i];
+			archivo_control<<" ";
+		}
+		archivo_control<<"\n";
+		for(int i = 0;i<cambios.size();i++){
+			archivo_control<<cambios[i];
+			archivo_control<<"\n";
+		}
+		*/
 
-
-
+	archivo_control.close();
 
 }
 

@@ -17,11 +17,12 @@ class Controlador{
 	private:
 		Programa prog;
 		fstream archivo_control;
+		string ultima_version;
 	public:
 		Controlador();
 		void crear(string,string);
 		vector<int> split(string);
-		void obtener(string,string);
+		vector<string> obtener(string,string);
 		void modificar(string);
 		void nuevoDelta(string,string);
 		void impresion();
