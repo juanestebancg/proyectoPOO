@@ -107,9 +107,6 @@ bool Controlador::validacion(string s){
 
 void Controlador::nuevoDelta(string s,string control){
 	archivo_control.open(control.c_str(),ios::app);
-	//if(!validacion(s)){
-		//return;
-	//}
 	int puntos = 0,aux = 0,pot = 0;
 	int RN = 0;
 	bool band = true;
@@ -276,11 +273,10 @@ void Controlador::nuevoDelta(string s,string control){
 	archivo_control.close();
 	prog.actualizarVersiones(versiones_temp);
 
+
 }
 
 void Controlador::obtener(string control,string version){
-
-	nuevoDelta(version,control);
 	archivo_control.open(control.c_str(),ios::in);
     string linea;
     fstream archivo;
@@ -297,7 +293,13 @@ void Controlador::obtener(string control,string version){
             if(linea == version){
                 while(!archivo_control.eof()){
 
+
                     getline(archivo_control,linea);
+                    if(linea=="_#"){
+                           band = false;
+                           archivo_control.close();
+                           break;
+                      }
                     if(linea!="_#" && cont!=1 && cont!=2){
                         cambios.push_back(linea);
                     }
@@ -309,19 +311,17 @@ void Controlador::obtener(string control,string version){
                         agregadas = split(linea);
 
                     }
-                    if(linea=="_#"){
-                        band = false;
-                        break;
-                    }
+
                     cont++;
                 }
 
             }
 
         }
-        if(band==true){
-        return;
-        }
+    	if(cont==1){
+    		archivo.close();
+    		return;
+    	}
 
         int j = 1, cont_e = 0;
         while(!archivo.eof()){
@@ -347,7 +347,14 @@ void Controlador::obtener(string control,string version){
      }
 
      archivo.close();
-     archivo_control.close();
+
+
+
+
+
+
+
+
 }
 
 Controlador::~Controlador(){

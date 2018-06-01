@@ -14,11 +14,26 @@ using namespace std;
 int main(){
 	Controlador control;
 	control.crear("prog1.txt","hhh.txt");
-	control.obtener("jeje.txt","1.2");
+	//control.obtener("jeje.txt","1.2");
+	control.nuevoDelta("1.2","jeje.txt");
+
+
+	control.nuevoDelta("1.3","jeje.txt");
+	control.obtener("jeje.txt","1.3");
+
+	control.nuevoDelta("1.1","jeje.txt");
 	control.obtener("jeje.txt","1.1");
 
+	control.nuevoDelta("1.1.1.1","jeje.txt");
+	control.obtener("jeje.txt","1.1.1.1");
 
+	control.nuevoDelta("1.2","jeje.txt");
+	control.obtener("jeje.txt","1.2");
 
+	control.nuevoDelta("1.3","jeje.txt");
+	control.obtener("jeje.txt","1.3");
+
+	control.impresion();
 
 	/*
 	control.nuevoDelta("1.4");
@@ -34,7 +49,7 @@ int main(){
 	control.nuevoDelta("1.1.2");
 	control.nuevoDelta("1.4.2");
 
-	control.impresion();
+
 	*/
 
 	return 0;
