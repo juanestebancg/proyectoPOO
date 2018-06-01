@@ -107,6 +107,11 @@ bool Controlador::validacion(string s){
 
 void Controlador::nuevoDelta(string s,string control){
 	archivo_control.open(control.c_str(),ios::app);
+	if(archivo_control.fail()){
+		cout<<"error"<<endl;
+		archivo_control.close();
+		nuevoDelta(s,control);
+	}
 	int puntos = 0,aux = 0,pot = 0;
 	int RN = 0;
 	bool band = true;
@@ -287,6 +292,12 @@ void Controlador::obtener(string control,string version){
     vector<int> agregadas;
     vector<string> copia;
     int cont = 1;
+    if(archivo_control.fail() || archivo.fail()){
+    	cout<<"error1"<<endl;
+    	archivo.close();
+    	archivo_control.close();
+    	obtener(control,version);
+    }
 
     while(!archivo_control.eof() && band){
             getline(archivo_control,linea);
@@ -347,6 +358,7 @@ void Controlador::obtener(string control,string version){
      }
 
      archivo.close();
+     archivo_control.close();
 
 
 

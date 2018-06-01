@@ -27,14 +27,23 @@ int main(){
 	control.nuevoDelta("1.1.1.1","jeje.txt");
 	control.obtener("jeje.txt","1.1.1.1");
 
+
 	control.nuevoDelta("1.2","jeje.txt");
 	control.obtener("jeje.txt","1.2");
 
+	control.nuevoDelta("2","jeje.txt");
+	control.obtener("jeje.txt","2");
+
+	control.nuevoDelta("1.1.2","jeje.txt");
+	control.obtener("jeje.txt","1.1.2");
+
+	control.impresion();
+	/*
 	control.nuevoDelta("1.3","jeje.txt");
 	control.obtener("jeje.txt","1.3");
 
-	control.impresion();
 
+	*/
 	/*
 	control.nuevoDelta("1.4");
 	control.nuevoDelta("1.5");
