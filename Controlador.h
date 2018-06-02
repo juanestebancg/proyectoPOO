@@ -29,6 +29,7 @@ class Controlador{
 		void impresion();
 		bool validacion(string);
 		void infoModificacion(string);
+		void diferencia(string,string,string);
 
 		~Controlador();
 };

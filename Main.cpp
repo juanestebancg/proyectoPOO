@@ -20,6 +20,24 @@ int main(){
 	control.modificar("s_prog1.txt",mod);
 	control.infoModificacion("s_prog1.txt");
 
+	vector<string> mod2 = {"from string import *","from jeje import *","from sys import *",
+			"","def main():","	#aca hay ciclo","	j = 0","	for j in range(20):","		print i",
+			" return 0"
+	};
+	control.nuevoDelta("1.1","s_prog1.txt");
+	control.modificar("s_prog1.txt",mod2);
+	control.infoModificacion("s_prog1.txt");
+
+
+	vector<string> mod3 = {"#include <iostream>","using namespace std;","int main(){",
+	"cout<<jeje<<endl","return 0;","}"};
+
+	control.nuevoDelta("2","s_prog1.txt");
+	control.modificar("s_prog1.txt",mod3);
+	control.infoModificacion("s_prog1.txt");
+
+
+
 	//control.obtener("jeje.txt","1.2");
 
 

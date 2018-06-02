@@ -16,6 +16,9 @@ Controlador::Controlador(){
 
 
 void Controlador::impresion(){
+	/* este metodo imprime tod el historial de versiones
+	 *
+	 */
 	vector<Version> v1;
 	vector<Subversion> v2;
 	v1 = prog.getVersiones();
@@ -33,6 +36,10 @@ void Controlador::impresion(){
 	}
 }
 void Controlador::crear(string temp,string s){
+	/*esta funcion crea el archivo de control y guarda el nombre del archivo original
+	 * que ya se encuentra en el directorio, el temp es el nombre del archivo original
+	 * y el s es el nombre del archivo de control
+	 */
 
     archivo_control.open(s.c_str(), ios::out);
     if(archivo_control.fail()){
@@ -107,6 +114,9 @@ bool Controlador::validacion(string s){
 }
 
 void Controlador::nuevoDelta(string s,string control){
+	/*esta funcion crea el nuevo delta en la ramificacion, el s es la version y control
+	 * es el nombre del archivo de control
+	 */
 	anterior_version = s;
 	int puntos = 0,aux = 0,pot = 0;
 	int RN = 0;
@@ -193,6 +203,7 @@ void Controlador::nuevoDelta(string s,string control){
 	}
 	else if(puntos==0){
 		string auxs = versiones_temp[versiones_temp.size()-1].getNombre();
+		anterior_version = auxs;
 		int R = stoi(auxs.substr(0,auxs.find(".")));
 		int N = stoi(s);
 		if(N>R){
@@ -226,6 +237,7 @@ void Controlador::nuevoDelta(string s,string control){
 			if(versiones_temp[i].getNombre() == nombre_newVersion){
 				subver_temp = versiones_temp[i].getSubversiones();
 				temp = subver_temp[subver_temp.size()-1].getID();
+				anterior_version = temp;
 				for(int j = 0; j<temp.size() && band;j++){
 					if(temp[j] == '.'){
 						aux++;
@@ -259,6 +271,9 @@ void Controlador::nuevoDelta(string s,string control){
 }
 
 vector<string> Controlador::obtener(string control,string version){
+	/*esta funcion obtiene determinada version pedida por el usuario, control es el nombre
+	 * del archivo de control y version es la version que se desea obtener
+	 */
 	archivo_control.open(control.c_str(),ios::in);
     string linea;
     fstream archivo;
@@ -319,7 +334,7 @@ vector<string> Controlador::obtener(string control,string version){
     	}
 
         int j = 1, cont_e = 0;
-        while(!archivo.eof()){
+        while(!archivo.eof() && cont_e<eliminadas.size()){
         	getline(archivo,linea);
         	if(j==eliminadas[cont_e]){
         		cont_e++;
@@ -348,6 +363,12 @@ vector<string> Controlador::obtener(string control,string version){
 }
 
 void Controlador::modificar(string s,vector<string> mod){
+	/*
+	 * esta funcion es la que se encarga de escribir en el archivo los cambios en la version
+	 * el s es el nombre del archivo de control y el vector mod es el cambio que se le hizo
+	 * al codigo guardado linea a linea
+	 *
+	 */
 	archivo_control.open(s.c_str(),ios::app);
 	fstream archivo;
 	archivo.open(prog.getOriginal().c_str(),ios::in);
@@ -364,7 +385,7 @@ void Controlador::modificar(string s,vector<string> mod){
 	string linea;
 	string temp;
 	//getline(archivo,linea);
-	while(!archivo.eof()){
+	while(!archivo.eof() && i<mod.size()){
 		getline(archivo,linea);
 		if(mod[i] != linea){
 			temp = to_string(i+1);
@@ -419,35 +440,38 @@ void Controlador::infoModificacion(string control){
 	for(int h = 0;h<v2.size();h++)
 		cout<<v2[h]<<endl;
 
-	cout<<"ant "<<anterior_version<<"ult "<<ultima_version<<endl;
+
+	cout<<"ant "<<anterior_version<<" ult "<<ultima_version<<endl;
 	int tam,iguales = 0,eliminadas = 0,insertadas = 0,i,j;
 	if(v1.size()>=v2.size()){
-		tam = v2.size();
-		for(i = 0;i<tam;i++){
-			if(v1[i] != v2[i]){
-				eliminadas++;
+		for(i = 0;i<v2.size();i++){
+			if(v2[i] != v1[i]){
 				insertadas++;
+				eliminadas++;
 			}
 			else{
 				iguales++;
 			}
-
 		}
-		insertadas += (v1.size()-tam);
+		for(j = i;j<v1.size();j++){
+			insertadas++;
+		}
 	}
 	else{
-		tam = v1.size();
-		for(i = 0; i<tam;i++){
+		for(i = 0;i<v1.size();i++){
 			if(v1[i] != v2[i]){
-				eliminadas++;
 				insertadas++;
+				eliminadas++;
 			}
 			else{
 				iguales++;
 			}
 		}
-		insertadas += (v2.size()-tam);
+		for(j = i; j<v2.size();j++){
+			insertadas++;
+		}
 	}
+
 
 	cout<<"i "<<insertadas<<" e "<<eliminadas<<" ig "<<iguales<<endl;
 
