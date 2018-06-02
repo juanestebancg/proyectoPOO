@@ -33,24 +33,25 @@ void Controlador::impresion(){
 	}
 }
 void Controlador::crear(string temp,string s){
-	prog.setOriginal(temp);
-    //archivo_control.open(s.c_str(), ios::trunc);
+
+    archivo_control.open(s.c_str(), ios::out);
+    if(archivo_control.fail()){
+    	archivo_control.close();
+    	crear(temp,s);
+    	cout<<"error crear"<<endl;
+    }
+    anterior_version = "1.1";
 	Version v1;
-	Version v2,v3,v4,v5;
+	prog.setOriginal(temp);
 	prog.addVersion("1.1",v1);
-	prog.addVersion("1.2",v2);
-	/*
-	prog.addVersion("1.3",v3);
-	prog.addVersion("1.4",v4);
-	prog.addVersion("1.5",v5);
-*/
+	archivo_control.close();
 }
 vector<int> Controlador::split(string s){
 	vector<int> posiciones;
 	string temp;
 	for(int i = 0; i<s.size();i++){
 		if(s[i] != ' '){
-			while(s[i] != ' '){
+			while(s[i] != ' ' && i<s.size()){
 				temp.push_back(s[i]);
 				i++;
 			}
@@ -106,6 +107,7 @@ bool Controlador::validacion(string s){
 }
 
 void Controlador::nuevoDelta(string s,string control){
+	anterior_version = s;
 	int puntos = 0,aux = 0,pot = 0;
 	int RN = 0;
 	bool band = true;
@@ -273,37 +275,44 @@ vector<string> Controlador::obtener(string control,string version){
     	archivo_control.close();
     	obtener(control,version);
     }
+    if(version == "1.1"){
+    	while(!archivo.eof()){
+    		getline(archivo,linea);
+    		copia.push_back(linea);
+    	}
+    }
+    else{
+		while(!archivo_control.eof() && band){
+				getline(archivo_control,linea);
+				if(linea == version){
+					while(!archivo_control.eof()){
 
-    while(!archivo_control.eof() && band){
-            getline(archivo_control,linea);
-            if(linea == version){
-                while(!archivo_control.eof()){
 
+						getline(archivo_control,linea);
+						if(linea=="_#"){
+							   band = false;
+							   archivo_control.close();
+							   break;
+						  }
+						if(linea!="_#" && cont!=1 && cont!=2){
+							cambios.push_back(linea);
+						}
+						if(cont==1){
+							eliminadas = split(linea);
 
-                    getline(archivo_control,linea);
-                    if(linea=="_#"){
-                           band = false;
-                           archivo_control.close();
-                           break;
-                      }
-                    if(linea!="_#" && cont!=1 && cont!=2){
-                        cambios.push_back(linea);
-                    }
-                    if(cont==1){
-                        eliminadas = split(linea);
+						}
+						if(cont==2){
+							agregadas = split(linea);
 
-                    }
-                    if(cont==2){
-                        agregadas = split(linea);
+						}
 
-                    }
+						cont++;
+					}
 
-                    cont++;
-                }
+				}
 
-            }
-
-        }
+			}
+    }
     	if(cont==1){
     		archivo.close();
     		return copia;
@@ -328,9 +337,9 @@ vector<string> Controlador::obtener(string control,string version){
     }
 
 //Vista
-     for(int i = 0;i<copia.size();i++){
-    	 cout<<copia[i]<<endl;
-     }
+     //for(int i = 0;i<copia.size();i++){
+    	// cout<<copia[i]<<endl;
+     //}
 
      archivo.close();
      archivo_control.close();
@@ -338,41 +347,48 @@ vector<string> Controlador::obtener(string control,string version){
 
 }
 
-void Controlador::modificar(string s){
+void Controlador::modificar(string s,vector<string> mod){
 	archivo_control.open(s.c_str(),ios::app);
-	if(archivo_control.fail()){
+	fstream archivo;
+	archivo.open(prog.getOriginal().c_str(),ios::in);
+	if(archivo_control.fail() || archivo.fail()){
+		archivo.close();
 		archivo_control.close();
-		//modificar(s,v,mod,copia);
-		modificar(s);
+		cout<<"error modificar"<<endl;
+		modificar(s,mod);
 	}
+	int i = 0,j;
 	vector<string> cambios;
-	vector<char> insertadas;
-	vector<char> eliminadas;
+	vector<string> insertadas;
+	vector<string> eliminadas;
 	string linea;
-	char temp;
-	/*
-	for(int i = 0;i<mod.size();i++){
-		if(i>copia.size()){
-			temp = char(i+1);
-			insertadas.push_back(temp);
-			cambios.push_back(mod[i]);
-		}
-		if(mod[i] != copia[i]){
-			temp = char(i+1);
+	string temp;
+	//getline(archivo,linea);
+	while(!archivo.eof()){
+		getline(archivo,linea);
+		if(mod[i] != linea){
+			temp = to_string(i+1);
 			eliminadas.push_back(temp);
-			insertadas.push_back(temp);
 			cambios.push_back(mod[i]);
-
+			insertadas.push_back(temp);
 		}
-	}*/
 
-		//getline(archivo_control,linea);
+		i++;
+	}
+	archivo.close();
+	if(i<mod.size()){
+		for( j = i;j<mod.size();j++){
+			temp = to_string(j+1);
+			insertadas.push_back(temp);
+			cambios.push_back(mod[j]);
+		}
+	}
+
+
 		archivo_control<<"\n";
 		archivo_control<<ultima_version;
 		archivo_control<<"\n";
-		archivo_control<<"_#";
-		archivo_control<<"\n";
-		/*
+
 		for(int i = 0; i<eliminadas.size();i++){
 			archivo_control<<eliminadas[i];
 			archivo_control<<" ";
@@ -387,12 +403,55 @@ void Controlador::modificar(string s){
 			archivo_control<<cambios[i];
 			archivo_control<<"\n";
 		}
-		*/
+		archivo_control<<"_#";
 
 	archivo_control.close();
 
 }
+void Controlador::infoModificacion(string control){
+	//esto no funciona bien, inverti ultima version con anterior version y se jode
+	vector<string> v1 = obtener(control,ultima_version);
+	vector<string> v2 = obtener(control,anterior_version);
+	//las dos lineas de arriba
+	for(int h = 0;h<v1.size();h++)
+		cout<<v1[h]<<endl;
+	cout<<"la otra"<<endl;
+	for(int h = 0;h<v2.size();h++)
+		cout<<v2[h]<<endl;
 
+	cout<<"ant "<<anterior_version<<"ult "<<ultima_version<<endl;
+	int tam,iguales = 0,eliminadas = 0,insertadas = 0,i,j;
+	if(v1.size()>=v2.size()){
+		tam = v2.size();
+		for(i = 0;i<tam;i++){
+			if(v1[i] != v2[i]){
+				eliminadas++;
+				insertadas++;
+			}
+			else{
+				iguales++;
+			}
+
+		}
+		insertadas += (v1.size()-tam);
+	}
+	else{
+		tam = v1.size();
+		for(i = 0; i<tam;i++){
+			if(v1[i] != v2[i]){
+				eliminadas++;
+				insertadas++;
+			}
+			else{
+				iguales++;
+			}
+		}
+		insertadas += (v2.size()-tam);
+	}
+
+	cout<<"i "<<insertadas<<" e "<<eliminadas<<" ig "<<iguales<<endl;
+
+}
 Controlador::~Controlador(){
 
 }

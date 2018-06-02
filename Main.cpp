@@ -13,39 +13,48 @@ using namespace std;
 
 int main(){
 	Controlador control;
-	control.crear("prog1.txt","hhh.txt");
+	control.crear("prog1.txt","s_prog1.txt");
+	vector<string> mod = {"from sys import *","import net","from string import *","","def main():","	# Imprime los numeros de 0 a 10 #",
+			"	i = 0","	for i in range(10):","		print i","	return 0"};
+	control.nuevoDelta("1.1","s_prog1.txt");
+	control.modificar("s_prog1.txt",mod);
+	control.infoModificacion("s_prog1.txt");
+
 	//control.obtener("jeje.txt","1.2");
+
+
+	/*
 	control.nuevoDelta("1.2","jeje.txt");
-	control.modificar("jeje.txt");
+
 
 
 	control.nuevoDelta("1.3","jeje.txt");
 	control.obtener("jeje.txt","1.3");
-	control.modificar("jeje.txt");
+
 
 	control.nuevoDelta("1.1","jeje.txt");
 	control.obtener("jeje.txt","1.1");
-	control.modificar("jeje.txt");
+
 
 	control.nuevoDelta("1.1.1.1","jeje.txt");
 	control.obtener("jeje.txt","1.1.1.1");
-	control.modificar("jeje.txt");
+
 
 
 	control.nuevoDelta("1.2","jeje.txt");
 	control.obtener("jeje.txt","1.2");
-	control.modificar("jeje.txt");
+
 
 	control.nuevoDelta("2","jeje.txt");
 	control.obtener("jeje.txt","2");
-	control.modificar("jeje.txt");
+
 
 
 
 	control.nuevoDelta("1.1.2","jeje.txt");
 	control.obtener("jeje.txt","1.1.2");
-	control.modificar("jeje.txt");
 
+	*/
 	control.impresion();
 	/*
 	control.nuevoDelta("1.3","jeje.txt");

@@ -18,15 +18,17 @@ class Controlador{
 		Programa prog;
 		fstream archivo_control;
 		string ultima_version;
+		string anterior_version;
 	public:
 		Controlador();
 		void crear(string,string);
 		vector<int> split(string);
 		vector<string> obtener(string,string);
-		void modificar(string);
+		void modificar(string,vector<string>);
 		void nuevoDelta(string,string);
 		void impresion();
 		bool validacion(string);
+		void infoModificacion(string);
 
 		~Controlador();
 };
