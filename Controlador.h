@@ -30,6 +30,7 @@ class Controlador{
 		bool validacion(string);
 		void infoModificacion(string);
 		void diferencia(string,string,string);
+		Programa infoPrograma();
 
 		~Controlador();
 };

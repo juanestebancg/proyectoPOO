@@ -35,8 +35,8 @@ int main(){
 	control.nuevoDelta("2","s_prog1.txt");
 	control.modificar("s_prog1.txt",mod3);
 	control.infoModificacion("s_prog1.txt");
-
-
+	cout<<endl;
+	control.diferencia("1.2","2.1","s_prog1.txt");
 
 	//control.obtener("jeje.txt","1.2");
 

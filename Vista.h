@@ -10,13 +10,10 @@
 
 #include <iostream>
 #include <string>
+#include "Controlador.h"
 
 using namespace std;
 
-class Vista{
-
-
-};
 
 
 

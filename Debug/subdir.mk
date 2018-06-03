@@ -8,21 +8,24 @@ CPP_SRCS += \
 ../Main.cpp \
 ../Programa.cpp \
 ../Subversion.cpp \
-../Version.cpp 
+../Version.cpp \
+../Vista.cpp 
 
 OBJS += \
 ./Controlador.o \
 ./Main.o \
 ./Programa.o \
 ./Subversion.o \
-./Version.o 
+./Version.o \
+./Vista.o 
 
 CPP_DEPS += \
 ./Controlador.d \
 ./Main.d \
 ./Programa.d \
 ./Subversion.d \
-./Version.d 
+./Version.d \
+./Vista.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

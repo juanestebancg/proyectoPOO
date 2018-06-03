@@ -14,7 +14,9 @@ Controlador::Controlador(){
 
 }
 
-
+Programa Controlador::infoPrograma(){
+	return prog;
+}
 void Controlador::impresion(){
 	/* este metodo imprime tod el historial de versiones
 	 *
@@ -269,11 +271,18 @@ void Controlador::nuevoDelta(string s,string control){
 
 
 }
+void comparar(vector<string> v1,vector<string> v2){
+
+	for(int i = 0;i<v1.size();i++){
+
+	}
+}
 
 vector<string> Controlador::obtener(string control,string version){
 	/*esta funcion obtiene determinada version pedida por el usuario, control es el nombre
 	 * del archivo de control y version es la version que se desea obtener
 	 */
+
 	archivo_control.open(control.c_str(),ios::in);
     string linea;
     fstream archivo;
@@ -476,9 +485,92 @@ void Controlador::infoModificacion(string control){
 	cout<<"i "<<insertadas<<" e "<<eliminadas<<" ig "<<iguales<<endl;
 
 }
+
+void Controlador::diferencia(string v1,string v2,string control){
+	vector<string> vec2 = obtener(control,v2);
+	vector<string> vec1 = obtener(control,v1);
+	string temp;
+	vector<string> eliminadas;
+	vector<string> insertadas;
+	int intervaloe_nc1 = 0, intervaloe_nc2 = 1,intervaloe_nf1 = 1,intervalo_nf2 = 1;
+	int intervaloi_nc1 = 1,intervaloi_nc2 = 1,intervaloi_nf1 = 1,intervaloi_nf2 = 1;
+	for(int i = 0; i < vec2.size();i++ ){
+		if(vec2[i] != vec1[i]){
+			intervaloi_nc1 = i;
+			intervaloi_nf1 = i+1;
+			intervaloi_nf2 = intervaloi_nf1;
+			intervaloe_nc1 = i+1;
+			intervaloe_nc2 = intervaloe_nc1;
+
+			while(vec2[i] != vec1[i] && i<vec2.size() && i <vec1.size()){
+				intervaloe_nc2++;
+				intervaloi_nf2++;
+				eliminadas.push_back(vec1[i]);
+
+				insertadas.push_back(vec2[i]);
+
+				i++;
+
+			}
+			if(i<vec1.size() && vec2.size()<vec1.size()){
+				for(int j = i;j<vec1.size();j++){
+					intervaloe_nc2++;
+					eliminadas.push_back(vec1[i]);
+				}
+			}
+			if(i == vec2.size() || i == vec1.size()){
+				cout<<intervaloe_nc1<<"-"<<intervaloe_nc2-1<<"e"<<endl;
+				for(int j = 0;j<eliminadas.size();j++){
+					cout<<"<"<<eliminadas[j]<<endl;
+				}
+			}
+			else{
+				cout<<intervaloe_nc1<<"-"<<intervaloe_nc2-1<<"e"<<i+1<<endl;
+				for(int j = 0;j<eliminadas.size();j++){
+					cout<<"<"<<eliminadas[j]<<endl;
+				}
+			}
+			if(i >= vec1.size()){
+				for(int j = i;j<vec2.size();j++){
+					intervaloi_nf2++;
+					insertadas.push_back(vec2[j]);
+					i++;
+				}
+			}
+
+				cout<<intervaloi_nc1<<"i"<<intervaloi_nf1<<"-"<<intervaloi_nf2-1<<endl;
+				for(int j = 0;j<insertadas.size();j++){
+					cout<<">"<<insertadas[j]<<endl;
+				}
+
+
+		}
+		insertadas.clear();
+		eliminadas.clear();
+
+	}
+
+}
+
 Controlador::~Controlador(){
 
 }
 
+/*
+ * 							intervaloi_nc1 = i;
+									intervaloi_nf1 = i+1;
+									intervaloi_nf2 = intervaloi_nf1;
+									while(i<vec2.size()){
+										insertadas.push_back(vec2[i]);
+										intervalo_nf2++;
+										i++;
+									}
+									cout<<intervaloi_nc1<<"i"<<intervaloi_nf1<<"-"<<intervaloi_nf2<<endl;
+									for(int j = 0;j<insertadas.size();j++){
+										cout<<">"<<insertadas[j]<<endl;
+									}
+									break;
+								}
+ */
 
 
