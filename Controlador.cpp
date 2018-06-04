@@ -17,6 +17,9 @@ Controlador::Controlador(){
 Programa Controlador::infoPrograma(){
 	return prog;
 }
+vector<Version> Controlador::totalVersiones(){
+	return prog.getVersiones();
+}
 void Controlador::impresion(){
 	/* este metodo imprime tod el historial de versiones
 	 *
@@ -54,6 +57,7 @@ void Controlador::crear(string temp,string s){
 	prog.setOriginal(temp);
 	prog.addVersion("1.1",v1);
 	archivo_control.close();
+
 }
 vector<int> Controlador::split(string s){
 	vector<int> posiciones;
@@ -115,7 +119,7 @@ bool Controlador::validacion(string s){
 	return false;
 }
 
-void Controlador::nuevoDelta(string s,string control){
+void Controlador::nuevoDelta(string s){
 	/*esta funcion crea el nuevo delta en la ramificacion, el s es la version y control
 	 * es el nombre del archivo de control
 	 */
@@ -293,11 +297,15 @@ vector<string> Controlador::obtener(string control,string version){
     vector<int> agregadas;
     vector<string> copia;
     int cont = 1;
-    if(archivo_control.fail() || archivo.fail()){
+    if(archivo_control.fail() ){
     	cout<<"error1"<<endl;
-    	archivo.close();
     	archivo_control.close();
     	obtener(control,version);
+    }
+    if(archivo.fail()){
+    	cout<<"error11"<<endl;
+    	archivo.close();
+    	obtener(control,version)
     }
     if(version == "1.1"){
     	while(!archivo.eof()){
@@ -360,10 +368,6 @@ vector<string> Controlador::obtener(string control,string version){
 
     }
 
-//Vista
-     //for(int i = 0;i<copia.size();i++){
-    	// cout<<copia[i]<<endl;
-     //}
 
      archivo.close();
      archivo_control.close();
@@ -438,58 +442,18 @@ void Controlador::modificar(string s,vector<string> mod){
 	archivo_control.close();
 
 }
-void Controlador::infoModificacion(string control){
-	//esto no funciona bien, inverti ultima version con anterior version y se jode
-	vector<string> v1 = obtener(control,ultima_version);
-	vector<string> v2 = obtener(control,anterior_version);
-	//las dos lineas de arriba
-	for(int h = 0;h<v1.size();h++)
-		cout<<v1[h]<<endl;
-	cout<<"la otra"<<endl;
-	for(int h = 0;h<v2.size();h++)
-		cout<<v2[h]<<endl;
-
-
-	cout<<"ant "<<anterior_version<<" ult "<<ultima_version<<endl;
-	int tam,iguales = 0,eliminadas = 0,insertadas = 0,i,j;
-	if(v1.size()>=v2.size()){
-		for(i = 0;i<v2.size();i++){
-			if(v2[i] != v1[i]){
-				insertadas++;
-				eliminadas++;
-			}
-			else{
-				iguales++;
-			}
-		}
-		for(j = i;j<v1.size();j++){
-			insertadas++;
-		}
-	}
-	else{
-		for(i = 0;i<v1.size();i++){
-			if(v1[i] != v2[i]){
-				insertadas++;
-				eliminadas++;
-			}
-			else{
-				iguales++;
-			}
-		}
-		for(j = i; j<v2.size();j++){
-			insertadas++;
-		}
-	}
-
-
-	cout<<"i "<<insertadas<<" e "<<eliminadas<<" ig "<<iguales<<endl;
-
+string Controlador::getUltima(){
+	return ultima_version;
 }
 
-void Controlador::diferencia(string v1,string v2,string control){
+string Controlador::getAnterior(){
+	return anterior_version;
+}
+
+string Controlador::diferencia(string v1,string v2,string control){
 	vector<string> vec2 = obtener(control,v2);
 	vector<string> vec1 = obtener(control,v1);
-	string temp;
+	string temp,rel;
 	vector<string> eliminadas;
 	vector<string> insertadas;
 	int intervaloe_nc1 = 0, intervaloe_nc2 = 1,intervaloe_nf1 = 1,intervalo_nf2 = 1;
@@ -521,13 +485,15 @@ void Controlador::diferencia(string v1,string v2,string control){
 			if(i == vec2.size() || i == vec1.size()){
 				cout<<intervaloe_nc1<<"-"<<intervaloe_nc2-1<<"e"<<endl;
 				for(int j = 0;j<eliminadas.size();j++){
-					cout<<"<"<<eliminadas[j]<<endl;
+					//cout<<"<"<<eliminadas[j]<<endl;
+					rel+=eliminadas[j]+"\n";
 				}
 			}
 			else{
 				cout<<intervaloe_nc1<<"-"<<intervaloe_nc2-1<<"e"<<i+1<<endl;
 				for(int j = 0;j<eliminadas.size();j++){
-					cout<<"<"<<eliminadas[j]<<endl;
+					//cout<<"<"<<eliminadas[j]<<endl;
+					rel+=eliminadas[j]+"\n";
 				}
 			}
 			if(i >= vec1.size()){
@@ -540,7 +506,8 @@ void Controlador::diferencia(string v1,string v2,string control){
 
 				cout<<intervaloi_nc1<<"i"<<intervaloi_nf1<<"-"<<intervaloi_nf2-1<<endl;
 				for(int j = 0;j<insertadas.size();j++){
-					cout<<">"<<insertadas[j]<<endl;
+					//cout<<">"<<insertadas[j]<<endl;
+					rel+=insertadas[j]+"\n";
 				}
 
 
@@ -549,28 +516,11 @@ void Controlador::diferencia(string v1,string v2,string control){
 		eliminadas.clear();
 
 	}
+	return rel;
 
 }
 
 Controlador::~Controlador(){
 
 }
-
-/*
- * 							intervaloi_nc1 = i;
-									intervaloi_nf1 = i+1;
-									intervaloi_nf2 = intervaloi_nf1;
-									while(i<vec2.size()){
-										insertadas.push_back(vec2[i]);
-										intervalo_nf2++;
-										i++;
-									}
-									cout<<intervaloi_nc1<<"i"<<intervaloi_nf1<<"-"<<intervaloi_nf2<<endl;
-									for(int j = 0;j<insertadas.size();j++){
-										cout<<">"<<insertadas[j]<<endl;
-									}
-									break;
-								}
- */
-
 

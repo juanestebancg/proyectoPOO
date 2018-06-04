@@ -1,5 +1,5 @@
 Controlador.o: ../Controlador.cpp ../Controlador.h ../Programa.h \
- ../Version.h ../Subversion.h ../Vista.h
+ ../Version.h ../Subversion.h
 
 ../Controlador.h:
 
@@ -8,5 +8,3 @@ Controlador.o: ../Controlador.cpp ../Controlador.h ../Programa.h \
 ../Version.h:
 
 ../Subversion.h:
-
-../Vista.h:

@@ -14,6 +14,24 @@
 
 using namespace std;
 
+class Vista{
+protected:
+	Controlador control;
+	string nomb_control;
+	bool bandera;
+public:
+	Vista();
+	~Vista();
+	void menuPrincipal();
+	void option_Obtener();
+	void option_Modificar();
+	void option_Crear();
+	void option_Diferencia();
+	void validacion();
+	void option_Historial();
+	void info_Modificacion();
+
+};
 
 
 

@@ -11,7 +11,6 @@
 
 #include <string>
 #include "Programa.h"
-#include "Vista.h"
 
 class Controlador{
 	private:
@@ -25,12 +24,14 @@ class Controlador{
 		vector<int> split(string);
 		vector<string> obtener(string,string);
 		void modificar(string,vector<string>);
-		void nuevoDelta(string,string);
+		void nuevoDelta(string);
 		void impresion();
 		bool validacion(string);
-		void infoModificacion(string);
-		void diferencia(string,string,string);
+		string diferencia(string,string,string);
 		Programa infoPrograma();
+		string getUltima();
+		string getAnterior();
+		vector<Version> totalVersiones();
 
 		~Controlador();
 };

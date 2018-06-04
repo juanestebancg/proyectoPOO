@@ -8,14 +8,23 @@
 #include "Controlador.h"
 #include <iostream>
 #include <cstdlib>
+#include "Vista.h"
 
 using namespace std;
 
 int main(){
-	Controlador control;
-	control.crear("prog1.txt","s_prog1.txt");
-	vector<string> mod = {"from sys import *","import net","from string import *","","def main():","	# Imprime los numeros de 0 a 10 #",
-			"	i = 0","	for i in range(10):","		print i","	return 0"};
+
+
+
+	Vista v;
+	v.menuPrincipal();
+
+
+	//Controlador control;
+	//control.crear("prog1.txt","s_prog1.txt");
+	//vector<string> mod = {"from sys import *","import net","from string import *","","def main():","	# Imprime los numeros de 0 a 10 #",
+		//	"	i = 0","	for i in range(10):","		print i","	return 0"};
+	/*
 	control.nuevoDelta("1.1","s_prog1.txt");
 	control.modificar("s_prog1.txt",mod);
 	control.infoModificacion("s_prog1.txt");
@@ -36,7 +45,9 @@ int main(){
 	control.modificar("s_prog1.txt",mod3);
 	control.infoModificacion("s_prog1.txt");
 	cout<<endl;
-	control.diferencia("1.2","2.1","s_prog1.txt");
+	*/
+	//control.diferencia("1.1","1.2","s_prog1.txt");
+	//control.impresion();
 
 	//control.obtener("jeje.txt","1.2");
 
@@ -73,7 +84,8 @@ int main(){
 	control.obtener("jeje.txt","1.1.2");
 
 	*/
-	control.impresion();
+
+
 	/*
 	control.nuevoDelta("1.3","jeje.txt");
 	control.obtener("jeje.txt","1.3");
