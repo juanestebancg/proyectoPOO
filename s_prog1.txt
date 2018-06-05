@@ -11,15 +11,9 @@ from string import *
 		print i
 	return 0
 _#
-1.1.1.1
-1 2 
-1 2 
-je
-jio
-_#
 2.1
 1 2 
 1 2 
-jooooo
-dd
+dede
+fff
 _#

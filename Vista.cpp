@@ -55,7 +55,7 @@ void Vista::menuPrincipal(){
 	cout<<"Porfavor oprima un comando: (1) Obtener, (2) Modificar, (3) Crear, (4) Diferencia, (5) Historial, (6) Salir"<<endl;
 	cin>>opcion;
 	try{
-		if( opcion != "1" && opcion != "2" && opcion!="3" && opcion != "4" && opcion != "5"  ) throw verificar_entero();
+		if( opcion != "1" && opcion != "2" && opcion!="3" && opcion != "4" && opcion != "5" && opcion != "6" ) throw verificar_entero();
 
 		}
 		catch(exception& e){
