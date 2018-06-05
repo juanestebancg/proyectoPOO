@@ -250,12 +250,10 @@ vector<string> Controlador::obtener(string control,string version){
 	    vector<string> copia;
 	    int cont = 1;
 	    if(archivo_control.fail() ){
-	    	cout<<"error1"<<endl;
 	    	archivo_control.close();
 	    	obtener(control,version);
 	    }
 	    if(archivo.fail()){
-	    	cout<<"error11"<<endl;
 	    	archivo.close();
 	    	obtener(control,version);
 	}
@@ -341,7 +339,6 @@ void Controlador::modificar(string s,vector<string> mod){
 	if(archivo_control.fail() || archivo.fail()){
 		archivo.close();
 		archivo_control.close();
-		cout<<"error modificar"<<endl;
 		modificar(s,mod);
 	}
 	int i = 0,j;
