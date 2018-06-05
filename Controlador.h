@@ -26,8 +26,6 @@ class Controlador{
 		vector<string> obtener(string,string);
 		void modificar(string,vector<string>);
 		void nuevoDelta(string);
-		void impresion();
-		string diferencia(string,string,string);
 		Programa infoPrograma();
 		string getUltima();
 		string getAnterior();

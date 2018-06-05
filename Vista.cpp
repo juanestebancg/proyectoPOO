@@ -181,6 +181,8 @@ void Vista::option_Obtener(){
 	menuPrincipal();
 }
 
+
+
 void Vista::option_Modificar(){
 	string tmp,param1;
 	cout<<"ingrese la version a modificar"<<endl;
@@ -189,7 +191,6 @@ void Vista::option_Modificar(){
 	vector<string> param2;
 	bool flag = true;
 	control.nuevoDelta(param1);
-	cout<<control.estadoDelta()<<endl;
 	try{
 		if(!control.estadoDelta() || param1.size()>7) throw verificar_modificacion();
 
@@ -218,7 +219,6 @@ void Vista::option_Modificar(){
 }
 
 void Vista::info_Modificacion(){
-	//esto no funciona bien, inverti ultima version con anterior version y se jode
 		vector<string> v1 = control.obtener(nomb_control,control.getUltima());
 		while(v1.empty()){
 			v1 = control.obtener(nomb_control,control.getUltima());
@@ -227,37 +227,25 @@ void Vista::info_Modificacion(){
 		while(v2.empty()){
 			v2 = control.obtener(nomb_control,control.getAnterior());
 		}
-		//las dos lineas de arriba
 
-
-		cout<<"ant "<<control.getAnterior()<<" ult "<<control.getUltima()<<endl;
 		int tam,iguales = 0,eliminadas = 0,insertadas = 0,i,j;
-		if(v1.size()>=v2.size()){
-			for(i = 0;i<v2.size();i++){
-				if(v2[i] != v1[i]){
-					insertadas++;
-					eliminadas++;
-				}
-				else{
-					iguales++;
-				}
+		for(i = 0;i<v1.size() && i<v2.size();i++){
+			if(v1[i]==v2[i])
+				iguales++;
+			else{
+				insertadas++;
+				eliminadas++;
 			}
+		}
+		if(i<v1.size()){
 			for(j = i;j<v1.size();j++){
 				insertadas++;
 			}
 		}
-		else{
-			for(i = 0;i<v1.size();i++){
-				if(v1[i] != v2[i]){
-					insertadas++;
-					eliminadas++;
-				}
-				else{
-					iguales++;
-				}
-			}
+
+		if(i<v2.size()){
 			for(j = i; j<v2.size();j++){
-				insertadas++;
+				eliminadas++;
 			}
 		}
 		cout<<"la ultima version: "<<control.getUltima()<<endl;
@@ -275,24 +263,25 @@ void Vista::option_Diferencia(){
 	cin>>v2;
 
 	try{
-		if(!validacion(v1) || !validacion(v2)|| v1.size()>7 ||
+		if( v1.size()>7 ||
 				 v2.size()>7 || (v1.size()==7 && v1[3] != '.') ||
-				 (v2.size()==7 && v2[3] != '.')|| v1.size()==5 || v1.size() == 1 || v2.size() ==1) throw verificar_version();
+				 (v2.size()==7 && v2[3] != '.')|| v1.size()==5 || v1.size() == 1 || v2.size() ==1 || v2.size()==5|| !validacion(v1) || !validacion(v2)) throw verificar_version();
 	}
 	catch(exception &e){
 		cout<<e.what()<<endl;
 		option_Diferencia();
 	}
-
 	vector<string> vec1 = control.obtener(nomb_control,v1);
-
 	while(vec1.empty()){
-		vec1 = control.obtener(nomb_control,"1.1");
+		cout<<"while1"<<endl;
+		vec1 = control.obtener(nomb_control,v1);
 	}
 	vector<string> vec2 = control.obtener(nomb_control,v2);
 	while(vec2.empty()){
-		vec2 = control.obtener(nomb_control,"1.2");
+		cout<<"while2"<<endl;
+		vec2 = control.obtener(nomb_control,v2);
 	}
+	cout<<"llego"<<endl;
 	string temp,rel;
 	vector<string> eliminadas;
 	vector<string> insertadas;
@@ -319,7 +308,7 @@ void Vista::option_Diferencia(){
 			if(i<vec1.size() && vec2.size()<vec1.size()){
 				for(int j = i;j<vec1.size();j++){
 					intervaloe_nc2++;
-					eliminadas.push_back(vec1[i]);
+					eliminadas.push_back(vec1[j]);
 				}
 			}
 			if(i == vec2.size() || i == vec1.size()){

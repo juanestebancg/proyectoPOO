@@ -24,26 +24,7 @@ Programa Controlador::infoPrograma(){
 vector<Version> Controlador::totalVersiones(){
 	return prog.getVersiones();
 }
-void Controlador::impresion(){
-	/* este metodo imprime tod el historial de versiones
-	 *
-	 */
-	vector<Version> v1;
-	vector<Subversion> v2;
-	v1 = prog.getVersiones();
-	for(int i = 0;i<v1.size();i++){
-		cout<<v1[i].getNombre()<<endl;
-		if(!(v1[i].getSubversiones().empty())){
-			v2 = v1[i].getSubversiones();
-			cout<<"sub ";
-			for(int j = 0; j<v2.size();j++){
-				cout<<v2[j].getID()<<" -> ";
 
-			}
-			cout<<endl;
-		}
-	}
-}
 void Controlador::crear(string temp,string s){
 	/*esta funcion crea el archivo de control y guarda el nombre del archivo original
 	 * que ya se encuentra en el directorio, el temp es el nombre del archivo original
@@ -102,9 +83,6 @@ void Controlador::nuevoDelta(string s){
 			puntos++;
 		}
 	}
-	if(puntos == 0){
-		return;
-	}
 	anterior_version = s;
 	if(puntos == 1 && s == versiones_temp[versiones_temp.size()-1].getNombre()){
 		for(int i = s.size()-1;i>=0;i--){
@@ -155,7 +133,7 @@ void Controlador::nuevoDelta(string s){
 		for(int i = 0;i<versiones_temp.size();i++){
 			if(versiones_temp[i].getNombre() == nombre_newVersion){
 				subver_temp = versiones_temp[i].getSubversiones();
-				if(subver_temp[subver_temp.size()-1].getID() == s){
+				if(!subver_temp.empty() && subver_temp[subver_temp.size()-1].getID() == s){
 					for(int j = nombre_newSubver.size()-1 ; j>=0 && nombre_newSubver[j] != '.';j--){
 						RN += (nombre_newSubver[j]-'0')*pow(10,pot);
 						pot++;
@@ -174,13 +152,17 @@ void Controlador::nuevoDelta(string s){
 					delta_creado = true;
 					break;
 				}
+				else{
+					break;
+				}
 
 			}
 		}
 
 	}
 	else if(puntos==0){
-		string auxs = versiones_temp[versiones_temp.size()-1].getNombre();
+		string auxs;
+		auxs = versiones_temp[versiones_temp.size()-1].getNombre();
 		anterior_version = auxs;
 		int R = stoi(auxs.substr(0,auxs.find(".")));
 		int N = stoi(s);
@@ -214,30 +196,32 @@ void Controlador::nuevoDelta(string s){
 		for(int i = 0; i<versiones_temp.size() && band;i++){
 			if(versiones_temp[i].getNombre() == nombre_newVersion){
 				subver_temp = versiones_temp[i].getSubversiones();
-				temp = subver_temp[subver_temp.size()-1].getID();
-				anterior_version = temp;
-				for(int j = 0; j<temp.size() && band;j++){
-					if(temp[j] == '.'){
-						aux++;
-					}
-					if(aux==2){
-						otro = temp.substr(j+1,temp.size()-1);
-						otro = otro.substr(0,otro.find("."));
-						 num =atoi(otro.c_str());
-						 num2 = atoi(nombre_newSubver.c_str());
-						if(num<num2 ){
-							s += ".1";
-							nuevaSubver.setID(s);
-							subver_temp.push_back(nuevaSubver);
-							versiones_temp[i].nuevaSubver(subver_temp);
-							band = false;
-							ultima_version = s;
-							delta_creado = true;
-							break;
+				if(!subver_temp.empty()){
+					temp = subver_temp[subver_temp.size()-1].getID();
+					anterior_version = temp;
+					for(int j = 0; j<temp.size() && band;j++){
+						if(temp[j] == '.'){
+							aux++;
+						}
+						if(aux==2){
+							otro = temp.substr(j+1,temp.size()-1);
+							otro = otro.substr(0,otro.find("."));
+							 num =atoi(otro.c_str());
+							 num2 = atoi(nombre_newSubver.c_str());
+							if(num<num2 ){
+								s += ".1";
+								nuevaSubver.setID(s);
+								subver_temp.push_back(nuevaSubver);
+								versiones_temp[i].nuevaSubver(subver_temp);
+								band = false;
+								ultima_version = s;
+								delta_creado = true;
+								break;
+
+							}
+
 
 						}
-
-
 					}
 				}
 
@@ -256,25 +240,26 @@ vector<string> Controlador::obtener(string control,string version){
 	 */
 
 	archivo_control.open(control.c_str(),ios::in);
-    string linea;
-    fstream archivo;
-    archivo.open(prog.getOriginal().c_str(),ios::in);
-    bool band = true;
-    vector<string> cambios;
-    vector<int> eliminadas;
-    vector<int> agregadas;
-    vector<string> copia;
-    int cont = 1;
-    if(archivo_control.fail() ){
-    	cout<<"error1"<<endl;
-    	archivo_control.close();
-    	obtener(control,version);
-    }
-    if(archivo.fail()){
-    	cout<<"error11"<<endl;
-    	archivo.close();
-    	obtener(control,version);
-    }
+	    string linea;
+	    fstream archivo;
+	    archivo.open(prog.getOriginal().c_str(),ios::in);
+	    bool band = true;
+	    vector<string> cambios;
+	    vector<int> eliminadas;
+	    vector<int> agregadas;
+	    vector<string> copia;
+	    int cont = 1;
+	    if(archivo_control.fail() ){
+	    	cout<<"error1"<<endl;
+	    	archivo_control.close();
+	    	obtener(control,version);
+	    }
+	    if(archivo.fail()){
+	    	cout<<"error11"<<endl;
+	    	archivo.close();
+	    	obtener(control,version);
+	}
+
     if(version == "1.1"){
     	while(!archivo.eof()){
     		getline(archivo,linea);
@@ -338,7 +323,7 @@ vector<string> Controlador::obtener(string control,string version){
 
 
      archivo.close();
-     archivo_control.close();
+     //archivo_control.close();
      return copia;
 
 }
@@ -418,75 +403,6 @@ string Controlador::getAnterior(){
 	return anterior_version;
 }
 
-string Controlador::diferencia(string v1,string v2,string control){
-	vector<string> vec2 = obtener(control,v2);
-	vector<string> vec1 = obtener(control,v1);
-	string temp,rel;
-	vector<string> eliminadas;
-	vector<string> insertadas;
-	int intervaloe_nc1 = 0, intervaloe_nc2 = 1,intervaloe_nf1 = 1,intervalo_nf2 = 1;
-	int intervaloi_nc1 = 1,intervaloi_nc2 = 1,intervaloi_nf1 = 1,intervaloi_nf2 = 1;
-	for(int i = 0; i < vec2.size();i++ ){
-		if(vec2[i] != vec1[i]){
-			intervaloi_nc1 = i;
-			intervaloi_nf1 = i+1;
-			intervaloi_nf2 = intervaloi_nf1;
-			intervaloe_nc1 = i+1;
-			intervaloe_nc2 = intervaloe_nc1;
-
-			while(vec2[i] != vec1[i] && i<vec2.size() && i <vec1.size()){
-				intervaloe_nc2++;
-				intervaloi_nf2++;
-				eliminadas.push_back(vec1[i]);
-
-				insertadas.push_back(vec2[i]);
-
-				i++;
-
-			}
-			if(i<vec1.size() && vec2.size()<vec1.size()){
-				for(int j = i;j<vec1.size();j++){
-					intervaloe_nc2++;
-					eliminadas.push_back(vec1[i]);
-				}
-			}
-			if(i == vec2.size() || i == vec1.size()){
-				cout<<intervaloe_nc1<<"-"<<intervaloe_nc2-1<<"e"<<endl;
-				for(int j = 0;j<eliminadas.size();j++){
-					//cout<<"<"<<eliminadas[j]<<endl;
-					rel+=eliminadas[j]+"\n";
-				}
-			}
-			else{
-				cout<<intervaloe_nc1<<"-"<<intervaloe_nc2-1<<"e"<<i+1<<endl;
-				for(int j = 0;j<eliminadas.size();j++){
-					//cout<<"<"<<eliminadas[j]<<endl;
-					rel+=eliminadas[j]+"\n";
-				}
-			}
-			if(i >= vec1.size()){
-				for(int j = i;j<vec2.size();j++){
-					intervaloi_nf2++;
-					insertadas.push_back(vec2[j]);
-					i++;
-				}
-			}
-
-				cout<<intervaloi_nc1<<"i"<<intervaloi_nf1<<"-"<<intervaloi_nf2-1<<endl;
-				for(int j = 0;j<insertadas.size();j++){
-					//cout<<">"<<insertadas[j]<<endl;
-					rel+=insertadas[j]+"\n";
-				}
-
-
-		}
-		insertadas.clear();
-		eliminadas.clear();
-
-	}
-	return rel;
-
-}
 
 Controlador::~Controlador(){
 
