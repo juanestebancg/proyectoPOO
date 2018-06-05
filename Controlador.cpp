@@ -14,6 +14,10 @@ Controlador::Controlador(){
 
 }
 
+bool Controlador::estadoDelta(){
+	return delta_creado;
+}
+
 Programa Controlador::infoPrograma(){
 	return prog;
 }
@@ -77,53 +81,14 @@ vector<int> Controlador::split(string s){
 
 }
 
-bool Controlador::validacion(string s){
-	int puntos = 0,aux = 0;
-	string temp;
-	vector<Version> v1 = prog.getVersiones();
-	vector<Subversion> v2;
-	for(int i = 0;i<s.size();i++){
-		if(s[i] == '.'){
-			puntos++;
-		}
-	}
-	if(puntos== 1 ){
-		for(int i = 0;i<v1.size();i++){
-			if(v1[i].getNombre()==s){
-				return true;
-			}
-		}
-	}
-	else if(puntos == 3){
-		for(int i = 0;i<s.size() && aux < 2;i++){
-			if(s[i] == '.')
-				aux++;
-			if(aux<2)
-				temp.push_back(s[i]);
-		}
-		for(int i = 0;i<v1.size();i++){
-			if(v1[i].getNombre() == temp){
-				v2 = v1[i].getSubversiones();
-				for(int j = 0; j<v2.size();j++){
-					if(v2[j].getID() == s)
-						return true;
-				}
-			}
-		}
 
-
-	}
-	else if (puntos !=3 && puntos != 1){
-		return true;
-	}
-	return false;
-}
 
 void Controlador::nuevoDelta(string s){
 	/*esta funcion crea el nuevo delta en la ramificacion, el s es la version y control
 	 * es el nombre del archivo de control
 	 */
-	anterior_version = s;
+	delta_creado = false;
+
 	int puntos = 0,aux = 0,pot = 0;
 	int RN = 0;
 	bool band = true;
@@ -137,6 +102,10 @@ void Controlador::nuevoDelta(string s){
 			puntos++;
 		}
 	}
+	if(puntos == 0){
+		return;
+	}
+	anterior_version = s;
 	if(puntos == 1 && s == versiones_temp[versiones_temp.size()-1].getNombre()){
 		for(int i = s.size()-1;i>=0;i--){
 			if(s[i]=='.'){
@@ -151,6 +120,7 @@ void Controlador::nuevoDelta(string s){
 		nuevaVersion.setNombre(nombre_newVersion);
 		versiones_temp.push_back(nuevaVersion);
 		ultima_version = nombre_newVersion;
+		delta_creado = true;
 	}
 
 	else if(puntos == 1 && s!= versiones_temp[versiones_temp.size()-1].getNombre()){
@@ -162,6 +132,7 @@ void Controlador::nuevoDelta(string s){
 				version_temp.addSubversion(nuevaSubver);
 				versiones_temp[i] = version_temp;
 				ultima_version = hola;
+				delta_creado = true;
 				break;
 			}
 		}
@@ -200,6 +171,7 @@ void Controlador::nuevoDelta(string s){
 					nuevaSubver.setID(nombre_newVersion);
 					versiones_temp[i].addSubversion(nuevaSubver);
 					ultima_version =  nombre_newVersion;
+					delta_creado = true;
 					break;
 				}
 
@@ -218,7 +190,7 @@ void Controlador::nuevoDelta(string s){
 			nuevaVersion.setNombre(nombre_newVersion);
 			versiones_temp.push_back(nuevaVersion);
 			ultima_version =  nombre_newVersion;
-
+			delta_creado = true;
 		}
 
 	}
@@ -260,6 +232,7 @@ void Controlador::nuevoDelta(string s){
 							versiones_temp[i].nuevaSubver(subver_temp);
 							band = false;
 							ultima_version = s;
+							delta_creado = true;
 							break;
 
 						}
@@ -275,12 +248,7 @@ void Controlador::nuevoDelta(string s){
 
 
 }
-void comparar(vector<string> v1,vector<string> v2){
 
-	for(int i = 0;i<v1.size();i++){
-
-	}
-}
 
 vector<string> Controlador::obtener(string control,string version){
 	/*esta funcion obtiene determinada version pedida por el usuario, control es el nombre
@@ -305,7 +273,7 @@ vector<string> Controlador::obtener(string control,string version){
     if(archivo.fail()){
     	cout<<"error11"<<endl;
     	archivo.close();
-    	obtener(control,version)
+    	obtener(control,version);
     }
     if(version == "1.1"){
     	while(!archivo.eof()){

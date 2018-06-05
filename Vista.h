@@ -30,6 +30,7 @@ public:
 	void validacion();
 	void option_Historial();
 	void info_Modificacion();
+	bool validacion(string);
 
 };
 

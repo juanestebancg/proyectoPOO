@@ -18,6 +18,7 @@ class Controlador{
 		fstream archivo_control;
 		string ultima_version;
 		string anterior_version;
+		bool delta_creado;
 	public:
 		Controlador();
 		void crear(string,string);
@@ -26,12 +27,12 @@ class Controlador{
 		void modificar(string,vector<string>);
 		void nuevoDelta(string);
 		void impresion();
-		bool validacion(string);
 		string diferencia(string,string,string);
 		Programa infoPrograma();
 		string getUltima();
 		string getAnterior();
 		vector<Version> totalVersiones();
+		bool estadoDelta();
 
 		~Controlador();
 };
