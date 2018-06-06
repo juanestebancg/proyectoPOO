@@ -209,15 +209,23 @@ void Controlador::nuevoDelta(string s){
 							 num =atoi(otro.c_str());
 							 num2 = atoi(nombre_newSubver.c_str());
 							if(num<num2 ){
+
+								num+=1;
+								string p = to_string(num);
+								string x = nombre_newVersion + "." + p + ".1";
 								s += ".1";
-								nuevaSubver.setID(s);
+								nuevaSubver.setID(x);
 								subver_temp.push_back(nuevaSubver);
 								versiones_temp[i].nuevaSubver(subver_temp);
 								band = false;
-								ultima_version = s;
+								ultima_version = x;
 								delta_creado = true;
 								break;
 
+							}
+							else{
+								band = false;
+								break;
 							}
 
 

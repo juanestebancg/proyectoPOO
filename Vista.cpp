@@ -80,6 +80,8 @@ void Vista::menuPrincipal(){
 		option_Diferencia();
 	if(opcion == "5" && bandera)
 		option_Historial();
+	if(opcion == "6")
+		return;
 
 
 }
@@ -121,6 +123,7 @@ bool Vista::validacion(string s){
 
 
 	}
+	return false;
 }
 
 
@@ -273,15 +276,12 @@ void Vista::option_Diferencia(){
 	}
 	vector<string> vec1 = control.obtener(nomb_control,v1);
 	while(vec1.empty()){
-		cout<<"while1"<<endl;
 		vec1 = control.obtener(nomb_control,v1);
 	}
 	vector<string> vec2 = control.obtener(nomb_control,v2);
 	while(vec2.empty()){
-		cout<<"while2"<<endl;
 		vec2 = control.obtener(nomb_control,v2);
 	}
-	cout<<"llego"<<endl;
 	string temp,rel;
 	vector<string> eliminadas;
 	vector<string> insertadas;
@@ -334,7 +334,6 @@ void Vista::option_Diferencia(){
 				cout<<intervaloi_nc1<<"i"<<intervaloi_nf1<<"-"<<intervaloi_nf2-1<<endl;
 				for(int j = 0;j<insertadas.size();j++){
 					cout<<">"<<insertadas[j]<<endl;
-					rel+=insertadas[j]+"\n";
 				}
 
 
